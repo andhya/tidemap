@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tide Map</title>
+<style>
+  :root { color-scheme: light; --ink: #16324a; --muted: #5d7283; --line: #d9e2e8; --paper: #fff; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.4 system-ui, sans-serif; }
+  main { display: flex; gap: 24px; justify-content: center; align-items: flex-start; padding: 16px; flex-wrap: wrap; }
+  #map { height: calc(100vh - 32px); max-width: 100%; aspect-ratio: 3 / 4; object-fit: contain; }
+  aside { width: 280px; display: grid; gap: 16px; }
+  h1 { font-size: 20px; margin: 0; }
+  #time { font-size: 26px; font-variant-numeric: tabular-nums; }
+  input[type=range] { width: 100%; }
+  button { font: inherit; padding: 6px 12px; border: 1px solid var(--line); border-radius: 6px; background: #fff; color: inherit; cursor: pointer; }
+  .row { display: flex; gap: 8px; }
+  .ramp { height: 14px; border-radius: 3px; background: linear-gradient(90deg, rgb(222,196,142) 0%, rgb(222,196,142) 10%, rgb(0,0,255) 40%, rgb(0,0,64) 100%); }
+  .ticks { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
+  small { color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <img id="map" alt="Tide height map of UK waters" width="1200" height="1600">
+  <aside>
+    <h1>Tide map</h1>
+    <div id="time"></div>
+    <input id="hour" type="range" min="0" max="23" value="0" aria-label="Hours ahead">
+    <div class="row">
+      <button id="play">Play</button>
+      <button id="live">Now</button>
+    </div>
+    <div>
+      <div class="ramp"></div>
+      <div class="ticks"><span>1 m</span><span>4 m</span><span>10 m above chart datum</span></div>
+    </div>
+    <small>For learning tidal patterns. Not for navigation. Data: EOT20, TICON-3 (CC-BY), GSHHG.</small>
+  </aside>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+let timer = null, latest = 0, shownHour = 0;
+const hourStart = () => Math.floor(Date.now() / 3600e3) * 3600e3;
+const frame = h => {
+  const when = new Date(hourStart() + h * 3600e3);
+  return { when, url: `/api/map/${String(when.getUTCHours()).padStart(2, '0')}00Z.png?t=${when.getTime()}` };
+};
+const fmt = d => d.toLocaleString('en-GB', {weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit', timeZone:'UTC'}) + ' UTC';
+function show() {
+  const h = +$('hour').value, f = frame(h);
+  shownHour = hourStart();
+  $('time').textContent = (h === 0 ? 'Now · ' : '') + fmt(f.when);
+  const next = new Image(), mine = ++latest;
+  next.onload = () => { if (mine === latest) $('map').src = next.src; };
+  next.src = f.url;
+}
+function preload() { for (let h = 0; h < 24; h++) new Image().src = frame(h).url; }
+function stop() { clearInterval(timer); timer = null; $('play').textContent = 'Play'; }
+$('play').onclick = () => {
+  if (timer) return stop();
+  $('play').textContent = 'Pause';
+  timer = setInterval(() => { const h = +$('hour').value; $('hour').value = h >= 23 ? 0 : h + 1; show(); }, 500);
+};
+$('hour').oninput = () => { stop(); show(); };
+$('live').onclick = () => { stop(); $('hour').value = 0; show(); };
+preload(); show();
+setInterval(() => { if (hourStart() !== shownHour) { preload(); show(); } }, 30000);
+</script>
+</body>
+</html>

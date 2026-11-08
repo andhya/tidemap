@@ -1,0 +1,12 @@
+[Unit]
+Description=tidemap static server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/bin/python3 %h/tidemap/src/tidemap/serve.py %h/tidemap/site --port 8400
+Restart=on-failure
+MemoryMax=64M
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,9 @@
+[Unit]
+Description=tidemap hourly map render
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/tidemap
+ExecStart=%h/.local/bin/uv run --script %h/tidemap/src/tidemap/generate.py
+MemoryMax=500M
+Nice=10
