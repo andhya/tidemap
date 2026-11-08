@@ -18,6 +18,9 @@ class TideModel:
             self.real_mm = data["real_mm"]  # constituents x sea pixels
             self.imag_mm = data["imag_mm"]
             self.msl_above_cd = data["msl_above_cd"]
+        with np.load(path.with_name("seabed.npz")) as data:
+            self.depth_m = data["depth_m"]
+            self.relief = data["relief"]
 
     def heights_above_cd(self, when: datetime) -> np.ndarray:
         """Height above chart datum, in metres, at every sea pixel."""

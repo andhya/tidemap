@@ -20,4 +20,4 @@ git clone https://github.com/andhya/tidemap ~/tidemap && ~/tidemap/deploy/instal
 - `/api/map/HH00Z.png`: next occurrence of that hour, `0000Z` to `2300Z`
 - `/api/map/manifest.json`: valid time of each file
 
-Not for navigation. Data: EOT20 and TICON-3 (CC-BY 4.0), GSHHG (LGPL).
+Not for navigation. Data: EOT20, TICON-3 and EMODnet Bathymetry (CC-BY 4.0), GSHHG (LGPL).
