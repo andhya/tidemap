@@ -46,7 +46,7 @@
 <script>
 const $ = id => document.getElementById(id);
 let timer = null, latest = 0, shownHour = 0;
-const hourStart = () => Math.floor(Date.now() / 3600e3) * 3600e3;
+const hourStart = () => Math.floor((Date.now() + 300e3) / 3600e3) * 3600e3;  // frames roll over at :55
 const frame = h => {
   const when = new Date(hourStart() + h * 3600e3);
   return { when, url: `/api/map/${String(when.getUTCHours()).padStart(2, '0')}00Z.png?t=${when.getTime()}` };

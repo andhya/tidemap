@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SITE = ROOT / "site"
 INDEX = Path(__file__).parent / "index.html"
 FIELDS = ROOT / "data" / "fields.npz"
+LEAD = timedelta(minutes=5)  # the timer runs at :55 so now.png is right on the hour; index.html matches
 
 
 def filename(when: datetime) -> str:
@@ -24,8 +25,8 @@ def filename(when: datetime) -> str:
 
 
 def targets(now: datetime) -> list[datetime]:
-    """The current hour first, then the following 23."""
-    hour = now.astimezone(timezone.utc).replace(minute=0, second=0, microsecond=0)
+    """The hour current after LEAD first, then the following 23."""
+    hour = (now.astimezone(timezone.utc) + LEAD).replace(minute=0, second=0, microsecond=0)
     return [hour + timedelta(hours=h) for h in range(24)]
 
 

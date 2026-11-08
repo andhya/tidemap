@@ -1,8 +1,8 @@
 [Unit]
-Description=Render tomorrow's map three minutes past each hour
+Description=Render tomorrow's map five minutes before each hour
 
 [Timer]
-OnCalendar=*:03:00
+OnCalendar=*:55:00
 AccuracySec=30s
 Persistent=true
 
