@@ -74,7 +74,7 @@ def main() -> None:
             from model import TideModel
 
             model = TideModel(FIELDS)
-        return render_png(model.sea_index, model.heights_above_cd(when), model.depth_m, model.relief)
+        return render_png(model.sea_index, model.heights_above_cd(when), model.depth_m, model.relief, when)
 
     written = run(render, datetime.now(timezone.utc))
     print(f"rendered {len(written)}: {' '.join(written)}", flush=True)
